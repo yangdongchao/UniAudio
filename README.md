@@ -6,7 +6,7 @@ UniAudio is a universal audio generation model, which can solve a lot of audio g
 - Top-level Design
 - Training own UniAudio for any task with your own dataset.
 
-The more details will be updatad, and the demo pages can refer to:
+The more details will be updatad, and the demo pages can refer to: http://dongchaoyang.top/UniAudio_demo/
 
 ## Abstract
 Language models (LMs) have demonstrated the capability to handle a variety of generative tasks. This paper presents the UniAudio system, which, unlike prior task-specific approaches, leverages LMs techniques to generate multiple types of audio (including speech, sounds, music, and singing) with given input conditions. 
