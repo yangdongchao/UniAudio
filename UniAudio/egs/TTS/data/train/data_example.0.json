@@ -1,0 +1,19 @@
+{
+    "keys": {
+        "phone_seq": "phone.1.pt",
+        "prompt_seq": "utt2spk.1",
+        "audio_seq": "audio_codec.1.pt"
+    },
+    "type": [
+        "phone",
+        "audio_prompt",
+        "audio"
+    ],
+    "features": {},
+    "loss_key": "audio_seq",
+    "encoder_keys": [
+        "phone_seq",
+        "prompt_seq"
+    ],
+    "task": "tts"
+}

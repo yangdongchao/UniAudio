@@ -1,0 +1,127 @@
+
+########### model config ###########
+generator:
+  name: SoundStream
+  config:
+    n_filters: 32
+    D: 256
+    target_bandwidths: [0.5, 1, 1.5, 2, 4, 6]
+    ratios: [8, 5, 4, 2] # downsampling by 320
+    sample_rate: 16000
+    bins: 1024
+
+# Discriminator list
+#d_list: ['mpd', 'msd', 'mfd']
+d_list: ['mfd']
+mpd:
+  name: MultiPeriodDiscriminator
+  config:
+    period_sizes: [2, 3, 5, 7, 11]
+    period_kernel_size: 5
+
+msd:
+  name: MultiScaleDiscriminator
+  config:
+    num_scales: 3
+    pool_kernel_size: 4 
+    pool_stride: 2
+
+mfd:
+  name: MultiFrequencyDiscriminator
+  config:
+    hop_lengths: [32, 64, 128, 256, 512, 1024]
+    hidden_channels: [64, 128, 256, 512, 512, 512]
+    domain: double
+    mel_scale: true
+    sample_rate: 16000
+
+########### optimizer config ###########
+optimizer:
+  g:
+    name: AdamW
+    config:
+      lr: 2e-4
+      betas: [0.8, 0.99]
+      eps: 1.0e-6
+
+  d:
+    name: AdamW
+    config:
+      lr: 2e-4
+      betas: [0.8, 0.99]
+      eps: 1.0e-6
+
+lr_scheduler:
+  g:
+    name: ExponentialLR
+    config:
+      gamma: 0.999
+  d:
+    name: ExponentialLR
+    config:
+      gamma: 0.999
+
+########### criterion config ###########
+criterion:
+  g_criterion:
+    name: losses.generator_loss.GeneratorSTFTLoss
+    config:
+      use_mel_loss: false
+      #adv_criterion: LeastDLoss
+      adv_criterion: MSEGLoss
+      mel_loss_weight: 45
+      use_feature_match: true
+      feat_match_loss_weight: 20
+      use_full_stft_loss: true # Magnitude 
+      use_sub_stft_loss: true  # PQMF loss
+      full_stft_loss_weight: 1
+      sub_stft_loss_weight: 1
+      mel_scale_loss:
+        sampling_rate: 16000
+        n_fft: 1024
+        num_mels: 80
+        hop_size: 160
+        win_size: 800
+        fmin: 0
+      full_multi_scale_stft_loss: # Full-band multi-scale STFT loss.
+        fft_sizes: [512, 1024, 2048]
+        win_sizes: [480, 960, 1200]
+        hop_sizes: [120, 240, 300]
+      sub_multi_scale_stft_loss: # Sub-band multi-scale STFT loss.
+        num_bands: 6
+        fft_sizes: [128, 256, 256]
+        win_sizes: [80, 120, 200]
+        hop_sizes: [20, 40, 50]
+  
+  d_criterion:
+    name: losses.discriminator_loss.MSEDiscriminatorLoss
+    config: null
+
+  commit_loss_weight: 1. #1000
+
+########### training and data config ###########
+
+training_file: "train_valid_lists/train.lst"
+validation_file: "train_valid_lists/valid_256.lst"
+
+seed: 2333
+cudnn_deterministic: false
+tensorboard: true # whether to use tensorboard
+#checkpoint_interval: 5
+#summary_interval: 10
+#validation_interval: 10
+
+checkpoint_interval: 5000
+summary_interval: 100
+validation_interval: 5000
+
+num_epoches: 5000
+print_freq: 10
+discriminator_iter_start: 0  # start step after which we update discriminators
+num_ckpt_keep: 10
+
+segment_size: 64000
+audio_norm_scale: 0.95 
+batch_size: 16
+num_workers: 8
+num_plots: 8
