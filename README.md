@@ -1,12 +1,15 @@
 # UniAudio: An Audio Foundation Model Toward Universal Audio Generation
 
+Demo pages can refer to: http://dongchaoyang.top/UniAudio_demo/ <br>
+Paper: https://arxiv.org/pdf/2310.00704.pdf
+
 #### Overview
 UniAudio is a universal audio generation model, which can solve a lot of audio generation task with one model, such as TTS, VC, Singing voice synthesis, speech enhancement, speech extraction, text-to-sound, text-to-music, speech edit, audio edit, instructed TTS, and speech dereverberation. In the following, the details of UniAudio will be introduced. <br>
 - Neural Audio Codec Models
 - Top-level Design
 - Training own UniAudio for any task with your own dataset.
 
-The more details will be updatad, and the demo pages can refer to: http://dongchaoyang.top/UniAudio_demo/
+The more details will be updatad.
 
 ## Abstract
 Language models (LMs) have demonstrated the capability to handle a variety of generative tasks. This paper presents the UniAudio system, which, unlike prior task-specific approaches, leverages LMs techniques to generate multiple types of audio (including speech, sounds, music, and singing) with given input conditions. 
