@@ -1,6 +1,6 @@
 
-# A demo recipe for tts based on LibriTTS dataset.
-# tts: phone + prompt ---> wave
+# A demo recipe for VC based on LibriTTS dataset.
+# VC: smantic token + prompt ---> wave
 . ./path.sh
 
 pip3 install fairseq==0.12.2 einops==0.6.0 sentencepiece encodec
@@ -25,7 +25,7 @@ tag=
 inference_tag=default
 resume=
 data_tag=
-TASK='TTS'
+TASK='VC'
 
 if [ ! -d "utils" ]; then
   ln -s ../tools/kaldi/utils ./
@@ -66,8 +66,7 @@ if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
     # this part aims to get the information about the dataset. 
     # Considering different tasks using different dataset, we donot provide the scripts to access dataset
     # for audio data, please prepare wav.scp 
-    # for phone data, please prepare phone.scp
-    # please go to ../data_samples folder to see the samples
+    # for prompt, please prepare utt2spk
 fi
 
 if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
@@ -84,14 +83,6 @@ if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
       done
       utils/split_scp.pl data/${part}/wav.scp.shuf $split_scp
 
-      # split the text accordingly
-      for n in `seq 1 $ngpu`; do
-          python3 data_scripts/filter_scp.py \
-            data/${part}/${ngpu}splits/wav.${n}.scp \
-            data/${part}/phone.scp \
-            data/${part}/${ngpu}splits/phone.${n} &
-      done; wait
-
 
     done
 fi
@@ -103,13 +94,6 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
     for part in $valid_set $train_set; do
     # for part in $valid_set; do
       echo "prepare $part ... "
-
-      # phone alignment obtained by Kaldi
-      utils/run.pl JOB=1:${ngpu} data/${part}/${ngpu}splits/log/g2p_offline.JOB.log \
-        python3 data_scripts/offline_tokenization.py \
-          --input-file data/${part}/${ngpu}splits/phone.JOB \
-          --output-file data/${part}/${ngpu}splits/alignment.JOB.pt \
-          --tokenizer alignment --rank JOB || exit 1;
 
       # Prompt
       utils/run.pl JOB=1:$ngpu data/${part}/${ngpu}splits/log/filter_utt2spk.JOB.log \
@@ -123,6 +107,13 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
           --input-file data/${part}/${ngpu}splits/wav.JOB.scp \
           --output-file data/${part}/${ngpu}splits/audio_codec.JOB.pt \
           --tokenizer audio --rank JOB || exit 1;
+
+      # semantic
+      utils/run.pl JOB=1:$ngpu data/${part}/${ngpu}splits/log/semantic_dump.JOB.log \
+        python3 data_scripts/offline_tokenization.py \
+          --input-file data/${part}/${ngpu}splits/wav.JOB.scp \
+          --output-file data/${part}/${ngpu}splits/semantic_codec.JOB.pt \
+          --tokenizer semantic --rank JOB || exit 1;
       
     done
 fi
@@ -134,10 +125,10 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
       for n in `seq 0 $[$ngpu-1]`; do
         # TTS
         python3 data_scripts/create_data_json.py \
-         --task tts \
-         --out-json   $PWD/data/${part}/${ngpu}splits/data_tts.${n}.json \
+         --task VC \
+         --out-json   $PWD/data/${part}/${ngpu}splits/data_vc.${n}.json \
          --prompt_seq $PWD/data/${part}/${ngpu}splits/utt2spk.$[$n+1] \
-         --phone_seq  $PWD/data/${part}/${ngpu}splits/alignment.$[$n+1].pt \
+         --semantic_seq  $PWD/data/${part}/${ngpu}splits/alignment.$[$n+1].pt \
          --audio_seq  $PWD/data/${part}/${ngpu}splits/audio_codec.$[$n+1].pt \
          & 
       done; wait
@@ -150,8 +141,8 @@ if [ -z $data_tag ] && [ $stop_stage -le 4 ]; then
     echo "you should provide data tag" || exit 1;
 fi
 
-train_data_jsons="data/${train_set}/${ngpu}splits/data_tts.ALL.json"
-valid_data_jsons="data/${valid_set}/${ngpu}splits/data_tts.ALL.json"
+train_data_jsons="data/${train_set}/${ngpu}splits/data_vc.ALL.json"
+valid_data_jsons="data/${valid_set}/${ngpu}splits/data_vc.ALL.json"
 
 if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
     mkdir -p exp 
@@ -186,8 +177,8 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
 fi
 
 # TTS inference
-vc_test_sets="libritts_test"
-inference_tag="tts_inference"
+vc_test_sets="vc_test"
+inference_tag="vc_inference"
 inference_dir=exp/${tag}/inference_${inference_tag}
 ngpu=1
 if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
