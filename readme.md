@@ -35,7 +35,7 @@ conda activate uniaudio
 Then:
 ```
 cd UniAudio
-pip install requirements.txt -r
+bash requirements.sh
 bash UniAudio/download.sh
 ```
 ### TTS example
