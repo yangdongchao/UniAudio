@@ -40,7 +40,7 @@ class AudioTokenizer(AbsTokenizer):
         if not os.path.isfile(config_path):
             raise ValueError(f"{config_path} file does not exist.")
         config = OmegaConf.load(config_path)
-        self.ckpt_path = f"UniAudio/checkpoints/{tag}_model/model.pth'
+        self.ckpt_path = f"UniAudio/checkpoints/{tag}_model/model.pth"
         logging.info(f"using config {config_path} and model {self.ckpt_path}")
         self.soundstream = self.build_codec_model(config)
         # properties
@@ -121,7 +121,7 @@ class AudioTokenizer(AbsTokenizer):
                     wav = clip_by_length(wav, self.clip_length, self.n_codebook)
                 # Some task-specific on-the-fly pre-process
                 if task in ['speech_edit']:
-                    the target to predict
+                    #the target to predict
                     if 'speech_edit_target' in cache:
                         wav = cache['speech_edit_target']
                     # the corrupted input 
