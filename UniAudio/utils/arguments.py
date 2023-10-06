@@ -23,7 +23,7 @@ def add_tokenizer_arguments(parser):
     parser.add_argument("--phone-tokenizer", type=str, default="none", choices=["g2p", "alignment", "none"],
                         help="choice of phone tokenizer")
     parser.add_argument('--phone-tokenizer-dict', type=str, 
-                        default='/blob/v-dongyang/code_list/code_28/AudioGPT2/tools/tokenizer/phone/phone_dict',
+                        default='tools/tokenizer/phone/phone_dict',
                         help="phone dict to use if this is the alignment phone tokenizer")
 
     # text tokenier
