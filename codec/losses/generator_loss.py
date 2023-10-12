@@ -7,7 +7,6 @@ from torch.nn import functional as F
 from modules.commons.pqmf import PQMF
 from losses.basic_loss import FeatureMatchLoss, MultiResolutionSTFTLoss, LeastDLoss, MSEGLoss, MSEDLoss
 from utils.hifigan_mel import mel_spectrogram
-from losses.enh_loss import BasicEnhancementLoss
 
 
 class BasicGeneratorLoss(nn.Module):
@@ -110,20 +109,3 @@ class GeneratorSTFTLoss(BasicGeneratorLoss):
 
         return g_loss, g_loss_items
 
-
-class GeneratorSTFTEnhLoss(GeneratorSTFTLoss):
-    def __init__(self, config):
-        super().__init__(config)
-        self.enh_criterion = BasicEnhancementLoss(config.enh_loss)
-           
-
-    def forward(self, targets, outputs, output_real, output_fake, fmap_real, fmap_fake, use_adv_loss: bool = True):
-        g_loss, g_loss_items = super().forward(
-            targets, outputs, output_real, output_fake, fmap_real, fmap_fake, use_adv_loss=use_adv_loss)
-        
-        enh_loss, enh_loss_items = self.enh_criterion(outputs, targets)
-        g_loss = g_loss + enh_loss
-        for k, v in enh_loss_items.items():
-            g_loss_items[f"Train/{k}"] = v.item()
-
-        return g_loss, g_loss_items
