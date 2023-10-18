@@ -12,13 +12,9 @@ from io import BytesIO
 from kaldiio import ReadHelper
 from tools.tokenizer.soundstream.AudioTokenizer import AudioTokenizer
 from tools.tokenizer.soundstream.EncodecTokenizer import EncodecTokenizer
-#from tools.tokenizer.Text2Phone.Text2PhoneTokenizer import Text2PhoneTokenizer
 from tools.tokenizer.BPE.SPTokenizer import BPETokenizer
 from tools.tokenizer.Semantic.Semantic_tokenizer import SemanticTokenizer
 from tools.tokenizer.phone.phone_tokenizer import PhoneTokenizer
-from tools.tokenizer.Text_Image.BPETokenizer import BPETokenizer as ClipBPETokenizer
-from tools.tokenizer.AudioTagging.audio_tagging_tokenizer import AudioTaggingTokenizer 
-from tools.tokenizer.CLAP_RVQ.clap_rvq_tokenizer import CLAPRVQTokenizer
 def get_parser():
     parser = argparse.ArgumentParser(
         description="convert a data list, do tokenization and save as a torch .pt file",
@@ -31,7 +27,7 @@ def get_parser():
     parser.add_argument("--wav-scp", type=str, default=None, help="kaldi wav.scp file")
     parser.add_argument("--segments", type=str, default=None, help="kaldi segment file")
     parser.add_argument("--output-file", type=str, help="dict")
-    parser.add_argument("--tokenizer", type=str, choices=['audio', 'g2p', 'bpe', 'clipbpe', 'semantic', 'encodec', 'alignment', 'AT', 'clapRVQ'], help="what tokenizer to use")
+    parser.add_argument("--tokenizer", type=str, choices=['audio', 'g2p', 'bpe', 'semantic', 'encodec', 'alignment'], help="what tokenizer to use")
     parser.add_argument("--rank", type=int, help="local GPU rank, if applicable")
     parser.add_argument("--batch-size", type=int, default=1, help="for batch tokenization")
     return parser
@@ -64,20 +60,14 @@ def main(args):
         tokenizer = EncodecTokenizer(device=device)
     elif args.tokenizer == "semantic":
         tokenizer = SemanticTokenizer(device=device)
-    elif args.tokenizer == 'clapRVQ':
-        tokenizer = CLAPRVQTokenizer(device=device)
     # CPU tokenizers
     elif args.tokenizer == "g2p":
         pass
         #tokenizer = Text2PhoneTokenizer()
     elif args.tokenizer == "bpe":
         tokenizer = BPETokenizer()
-    elif args.tokenizer == "clipbpe":
-        tokenizer = ClipBPETokenizer()
     elif args.tokenizer == "alignment":
         tokenizer = PhoneTokenizer(duplicate=True)
-    elif args.tokenizer == "AT":
-        tokenizer = AudioTaggingTokenizer()
     else:
         raise NotImplementedError
     tokenizer = tokenizer.to(device)

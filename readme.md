@@ -9,7 +9,7 @@ UniAudio is a universal audio generation model, which can solve a lot of audio g
 - Training own UniAudio for any task with your own dataset: The details of training process
 
 The overview of UniAudio as following picture shows.
-![The overview of UniAudio](fig/overview.png)
+![The overview of UniAudio](fig/model.png)
 The task comparison between previous works.
 ![The task](fig/task.png)
 

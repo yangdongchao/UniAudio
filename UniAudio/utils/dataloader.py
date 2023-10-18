@@ -23,7 +23,6 @@ from tools.tokenizer.Prompt.audio_prompt_tokenizer import AudioPromptTokenizer
 from tools.tokenizer.BPE.SPTokenizer import BPETokenizer
 from tools.tokenizer.Semantic.Semantic_tokenizer import SemanticTokenizer
 from tools.tokenizer.phone.phone_tokenizer import PhoneTokenizer
-# from tools.tokenizer.AudioTagging.audio_tagging_tokenizer import AudioTaggingTokenizer
 from tools.tokenizer.T5.T5Tokenizer import FrozenT5Embedder
 from tools.tokenizer.classifier.SV_bool_tokenizer import SVBoolTokenizer
 from tools.tokenizer.Sing.sing_midi_tokenizer import SingMidiTokenizer
