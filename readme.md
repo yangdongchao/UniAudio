@@ -10,8 +10,7 @@ UniAudio is a universal audio generation model, which can solve a lot of audio g
 
 The overview of UniAudio as following picture shows.
 ![The overview of UniAudio](fig/model.png)
-The task comparison between previous works.
-![The task](fig/task.png)
+
 
 The more details will be updatad soon.
 
