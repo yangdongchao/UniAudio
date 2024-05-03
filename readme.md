@@ -1,4 +1,11 @@
 # UniAudio: An Audio Foundation Model Toward Universal Audio Generation
+### News
+This paper has been accepted by ICML 2024. We plan to release the checkpoints (we name it as Open-UniAudio) in the next few days. Our plans includes:
+- Provides all of task recipes
+- Provides a new and better audio codec for UniAudio
+- Provides the checkpoints of pre-training UniAudio, compared to paper's reported training data, we plan add more sound and music data to train the open UniAudio.
+
+If you are interested in Open-UniAudio, welcome to contact us! 
 
 ## Overview
 Demo page: http://dongchaoyang.top/UniAudio_demo/ <br>
