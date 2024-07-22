@@ -1,8 +1,18 @@
 # UniAudio: An Audio Foundation Model Toward Universal Audio Generation
 ### News
 This paper has been accepted by ICML 2024. We plan to release the checkpoints (we name it as Open-UniAudio) in the next few days. Our plans includes:
+- 2024.7.22: We first release a pre-trained checkpoint of UniAudio. This version is build on original audio codec https://github.com/yangdongchao/UniAudio/tree/main/codec . Compared with the training dataset in original paper, we further inclease the music dataset. In our paper, we only use the MSD dataset for music, and we find the performance is poor than other advanced system, thus we add DISCO-100k dataset into the training. The details of this version as follows:
+(a) Training dataset: speech+sound+music
+(b) Model size: n_layer: 16 n_head: 12  n_embd: 768
+(c) Vocabulary size: audio tokens: 3*1024; special tokens: 128; phone tokens: 306; Semantic tokens: 512; singing tokens: about 200
+
+```
+wget https://huggingface.co/Dongchao/UniAudio/resolve/main/uniaudio_v1.zip
+```
+
+### To do list
 - Provides all of task recipes
-- Provides a new and better audio codec for UniAudio
+- We scale the audio token vocabulary into 60k+. 
 - Provides the checkpoints of pre-training UniAudio, compared to paper's reported training data, we plan add more sound and music data to train the open UniAudio.
 
 If you are interested in Open-UniAudio, welcome to contact us! 
